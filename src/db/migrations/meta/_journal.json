@@ -29,6 +29,13 @@
       "when": 1755398950048,
       "tag": "0003_steady_toad",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1756399050048,
+      "tag": "0004_books_and_reading_tables",
+      "breakpoints": true
     }
   ]
 }
