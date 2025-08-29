@@ -188,6 +188,9 @@ export const books = pgTable(
     index("books_genre_idx").on(table.genre),
     index("books_series_idx").on(table.series_name),
     index("books_created_at_idx").on(table.created_at),
+    index("books_status_idx").on(table.status),
+    index("books_language_idx").on(table.language),
+    index("books_format_idx").on(table.format),
     uniqueIndex("books_isbn_10_unique").on(table.isbn_10),
     uniqueIndex("books_isbn_13_unique").on(table.isbn_13),
   ]
@@ -306,6 +309,8 @@ export const book_list_items = pgTable(
     index("book_list_items_book_idx").on(table.book_uuid),
     index("book_list_items_user_idx").on(table.user_uuid),
     index("book_list_items_status_idx").on(table.reading_status),
+    index("book_list_items_user_status_idx").on(table.user_uuid, table.reading_status),
+    index("book_list_items_added_at_idx").on(table.added_at),
     uniqueIndex("book_list_items_unique").on(table.list_uuid, table.book_uuid),
   ]
 );
