@@ -6,6 +6,8 @@
  * authentication, and other core services.
  */
 
+import { loadAIServiceConfig } from '@/services/ai/config';
+
 // Re-export AI service configuration
 export {
   loadAIServiceConfig,
@@ -143,7 +145,7 @@ export function getAllConfig() {
     app: loadAppConfig(),
     auth: loadAuthConfig(),
     payment: loadPaymentConfig(),
-    ai: getAIServiceConfig(),
+    ai: loadAIServiceConfig(),
   };
 }
 
@@ -155,7 +157,7 @@ export function initializeConfig() {
   validateEnvironment();
   
   // Validate AI service configuration
-  const aiConfig = getAIServiceConfig();
+  const aiConfig = loadAIServiceConfig();
   
   if (aiConfig.providers.length === 0) {
     console.warn('No AI providers configured. AI features will be disabled.');
