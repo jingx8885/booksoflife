@@ -31,6 +31,8 @@ import {
   AIUtils,
 } from './base';
 
+import { createAdapter } from './providers';
+
 /**
  * Main AI service class that orchestrates all AI providers
  */
@@ -308,16 +310,10 @@ export class AIService {
   // Private methods
 
   /**
-   * Create adapter instance for a provider (placeholder - would be provider-specific)
+   * Create adapter instance for a provider
    */
   private async createAdapter(config: ProviderConfig): Promise<IAIAdapter> {
-    // This would be replaced with actual provider-specific adapter creation
-    // For now, return a placeholder that throws
-    throw new AIError(
-      `Adapter creation not implemented for ${config.provider}`,
-      config.provider,
-      'NOT_IMPLEMENTED'
-    );
+    return createAdapter(config.provider);
   }
 
   /**
