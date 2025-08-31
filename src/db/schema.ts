@@ -314,3 +314,68 @@ export const book_list_items = pgTable(
     uniqueIndex("book_list_items_unique").on(table.list_uuid, table.book_uuid),
   ]
 );
+
+// AI Conversations table - For reading assistant chat conversations
+export const ai_conversations = pgTable(
+  "ai_conversations",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    uuid: varchar({ length: 255 }).notNull().unique(),
+    user_uuid: varchar({ length: 255 }).notNull(),
+    book_uuid: varchar({ length: 255 }), // Optional - conversation may be book-specific
+    session_uuid: varchar({ length: 255 }), // Optional - link to specific reading session
+    title: varchar({ length: 255 }).notNull().default("New Conversation"),
+    context_type: varchar({ length: 50 }).notNull().default("general"), // general, book_specific, chapter_specific
+    context_data: json(), // Additional context like current page, chapter, etc.
+    status: varchar({ length: 50 }).notNull().default("active"), // active, archived, deleted
+    total_messages: integer().notNull().default(0),
+    last_message_at: timestamp({ withTimezone: true }),
+    ai_model: varchar({ length: 100 }), // Track which AI model was used
+    ai_provider: varchar({ length: 50 }), // Track which provider was used
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    updated_at: timestamp({ withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("ai_conversations_user_idx").on(table.user_uuid),
+    index("ai_conversations_book_idx").on(table.book_uuid),
+    index("ai_conversations_session_idx").on(table.session_uuid),
+    index("ai_conversations_status_idx").on(table.status),
+    index("ai_conversations_user_book_idx").on(table.user_uuid, table.book_uuid),
+    index("ai_conversations_last_message_idx").on(table.last_message_at),
+    index("ai_conversations_created_at_idx").on(table.created_at),
+  ]
+);
+
+// AI Messages table - Individual messages within conversations
+export const ai_messages = pgTable(
+  "ai_messages",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    uuid: varchar({ length: 255 }).notNull().unique(),
+    conversation_uuid: varchar({ length: 255 }).notNull(),
+    user_uuid: varchar({ length: 255 }).notNull(),
+    role: varchar({ length: 50 }).notNull(), // user, assistant, system, function
+    content: text().notNull(),
+    metadata: json(), // Store additional message metadata
+    token_count: integer(), // Track token usage
+    ai_model: varchar({ length: 100 }), // Model used for this specific message
+    ai_provider: varchar({ length: 50 }), // Provider used for this specific message
+    response_time_ms: integer(), // Track response latency
+    function_call: json(), // Store function call details if applicable
+    error_info: json(), // Store error information if message failed
+    sequence_number: integer().notNull(), // Order within conversation
+    is_edited: boolean().notNull().default(false),
+    edit_history: json(), // Track message edits
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    updated_at: timestamp({ withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("ai_messages_conversation_idx").on(table.conversation_uuid),
+    index("ai_messages_user_idx").on(table.user_uuid),
+    index("ai_messages_role_idx").on(table.role),
+    index("ai_messages_sequence_idx").on(table.sequence_number),
+    index("ai_messages_conversation_sequence_idx").on(table.conversation_uuid, table.sequence_number),
+    index("ai_messages_created_at_idx").on(table.created_at),
+    uniqueIndex("ai_messages_conversation_sequence_unique").on(table.conversation_uuid, table.sequence_number),
+  ]
+);
