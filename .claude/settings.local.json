@@ -36,7 +36,15 @@
       "Bash(mkdir:*)",
       "Bash(gh auth:*)",
       "Bash(gh repo view:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(gh issue view:*)",
+      "Bash(grep:*)",
+      "Bash(gh issue close:*)",
+      "Bash(pnpm run:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm build:*)",
+      "Bash(mv:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

@@ -67,6 +67,11 @@ export interface ReadingContext {
 }
 
 /**
+ * Book context alias for compatibility
+ */
+export type BookContext = ReadingContext
+
+/**
  * Chat state management
  */
 export interface ChatState {

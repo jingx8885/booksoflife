@@ -8,6 +8,9 @@ import { Separator } from "@/components/ui/separator"
 import { ChatMessage, TypingIndicator, ChatMessage as ChatMessageType } from "@/components/ui/chat-message"
 import { ChatInputWrapper } from "@/components/ui/chat-input"
 import { ChatHistory, ChatSession, ChatHistoryMobile } from "@/components/ui/chat-history"
+import { useAIChat } from "@/hooks/useAIChat"
+import { useConversationHistory } from "@/hooks/useConversationHistory"
+import type { BookContext } from "@/types/chat"
 import { cn } from "@/lib/utils"
 import {
   MessageSquare,
@@ -20,6 +23,8 @@ import {
   BookOpen,
   Brain,
   Lightbulb,
+  AlertCircle,
+  Zap,
 } from "lucide-react"
 
 export interface ReadingContext {
@@ -37,14 +42,6 @@ export interface AIAssistantProps {
   defaultCollapsed?: boolean
 }
 
-interface ChatState {
-  messages: ChatMessageType[]
-  isLoading: boolean
-  currentSessionId: string | null
-  sessions: ChatSession[]
-  isTyping: boolean
-}
-
 export function AIAssistant({
   readingContext,
   className,
@@ -53,17 +50,57 @@ export function AIAssistant({
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
   const [showHistory, setShowHistory] = React.useState(false)
   const [isMobileHistoryOpen, setIsMobileHistoryOpen] = React.useState(false)
-  
-  const [chatState, setChatState] = React.useState<ChatState>({
-    messages: [],
-    isLoading: false,
-    currentSessionId: null,
-    sessions: [],
-    isTyping: false,
-  })
 
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const messagesContainerRef = React.useRef<HTMLDivElement>(null)
+
+  // Convert ReadingContext to BookContext for hooks
+  const bookContext: BookContext = React.useMemo(() => ({
+    bookUuid: readingContext.bookId,
+    title: readingContext.bookTitle,
+    author: "", // Not provided in ReadingContext
+    currentChapter: readingContext.chapter || readingContext.chapterTitle,
+    currentPage: readingContext.pageNumber,
+    genre: "",
+    selectedText: readingContext.selectedText
+  }), [readingContext])
+
+  // Integration with Stream B hooks
+  const {
+    messages,
+    isLoading,
+    error,
+    connectionStatus,
+    currentConversationId,
+    sendMessage,
+    sendStreamingMessage,
+    clearMessages,
+    cancelRequest,
+    retryLastMessage
+  } = useAIChat({
+    bookContext,
+    enableStreaming: true,
+    autoRetry: true,
+    maxRetries: 3,
+    preferences: {
+      responseStyle: 'balanced',
+      includeExamples: true
+    }
+  })
+
+  const {
+    conversations,
+    isLoading: historyLoading,
+    loadConversations,
+    loadConversation,
+    deleteConversation,
+    createNewConversation,
+    exportConversations,
+    importConversations
+  } = useConversationHistory({
+    bookUuid: readingContext.bookId,
+    autoLoad: true
+  })
 
   // Auto scroll to bottom when new messages arrive
   const scrollToBottom = React.useCallback(() => {
@@ -72,119 +109,51 @@ export function AIAssistant({
 
   React.useEffect(() => {
     scrollToBottom()
-  }, [chatState.messages, chatState.isTyping, scrollToBottom])
+  }, [messages, isLoading, scrollToBottom])
 
-  // Handle sending messages
+  // Handle sending messages using real hooks
   const handleSendMessage = React.useCallback(async (content: string) => {
-    if (chatState.isLoading) return
-
-    const userMessage: ChatMessageType = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content,
-      timestamp: new Date(),
-    }
-
-    setChatState(prev => ({
-      ...prev,
-      messages: [...prev.messages, userMessage],
-      isLoading: true,
-      isTyping: true,
-    }))
+    if (isLoading) return
 
     try {
-      // TODO: Implement actual AI service call
-      // This is a mock implementation for now
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000))
-
-      const assistantMessage: ChatMessageType = {
-        id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        content: `I understand you're asking about: "${content}". Based on what you're reading in "${readingContext.bookTitle}"${readingContext.chapter ? ` (${readingContext.chapter})` : ''}, I can help explain concepts, summarize content, or answer specific questions. This is a mock response that will be replaced with actual AI integration.`,
-        timestamp: new Date(),
-      }
-
-      setChatState(prev => ({
-        ...prev,
-        messages: [...prev.messages, assistantMessage],
-        isLoading: false,
-        isTyping: false,
-      }))
-
-      // Update session if exists or create new one
-      if (!chatState.currentSessionId) {
-        const newSession: ChatSession = {
-          id: `session-${Date.now()}`,
-          title: content.length > 50 ? `${content.substring(0, 50)}...` : content,
-          bookTitle: readingContext.bookTitle,
-          chapter: readingContext.chapter,
-          messageCount: 2,
-          lastMessageAt: new Date(),
-          createdAt: new Date(),
-          preview: content,
-        }
-
-        setChatState(prev => ({
-          ...prev,
-          currentSessionId: newSession.id,
-          sessions: [newSession, ...prev.sessions],
-        }))
-      } else {
-        setChatState(prev => ({
-          ...prev,
-          sessions: prev.sessions.map(session =>
-            session.id === prev.currentSessionId
-              ? {
-                  ...session,
-                  messageCount: prev.messages.length + 1,
-                  lastMessageAt: new Date(),
-                }
-              : session
-          ),
-        }))
-      }
+      // Use the streaming message hook for real-time responses
+      await sendStreamingMessage(content)
     } catch (error) {
       console.error('Failed to send message:', error)
-      setChatState(prev => ({
-        ...prev,
-        isLoading: false,
-        isTyping: false,
-      }))
     }
-  }, [chatState.isLoading, chatState.currentSessionId, readingContext])
+  }, [isLoading, sendStreamingMessage])
 
-  // Handle session selection
-  const handleSessionSelect = React.useCallback((sessionId: string) => {
-    // TODO: Load session messages from storage/API
-    setChatState(prev => ({
-      ...prev,
-      currentSessionId: sessionId,
-      messages: [], // Would load actual messages here
-    }))
-    setShowHistory(false)
-    setIsMobileHistoryOpen(false)
-  }, [])
+  // Handle session selection using real hooks
+  const handleSessionSelect = React.useCallback(async (sessionId: string) => {
+    try {
+      await loadConversation(sessionId)
+      setShowHistory(false)
+      setIsMobileHistoryOpen(false)
+    } catch (error) {
+      console.error('Failed to load conversation:', error)
+    }
+  }, [loadConversation])
 
-  // Handle session deletion
-  const handleSessionDelete = React.useCallback((sessionId: string) => {
-    setChatState(prev => ({
-      ...prev,
-      sessions: prev.sessions.filter(session => session.id !== sessionId),
-      currentSessionId: prev.currentSessionId === sessionId ? null : prev.currentSessionId,
-      messages: prev.currentSessionId === sessionId ? [] : prev.messages,
-    }))
-  }, [])
+  // Handle session deletion using real hooks
+  const handleSessionDelete = React.useCallback(async (sessionId: string) => {
+    try {
+      await deleteConversation(sessionId)
+    } catch (error) {
+      console.error('Failed to delete conversation:', error)
+    }
+  }, [deleteConversation])
 
-  // Handle new session
-  const handleNewSession = React.useCallback(() => {
-    setChatState(prev => ({
-      ...prev,
-      currentSessionId: null,
-      messages: [],
-    }))
-    setShowHistory(false)
-    setIsMobileHistoryOpen(false)
-  }, [])
+  // Handle new session using real hooks
+  const handleNewSession = React.useCallback(async () => {
+    try {
+      await createNewConversation(bookContext)
+      clearMessages()
+      setShowHistory(false)
+      setIsMobileHistoryOpen(false)
+    } catch (error) {
+      console.error('Failed to create new conversation:', error)
+    }
+  }, [createNewConversation, clearMessages, bookContext])
 
   if (isCollapsed) {
     return (
@@ -218,6 +187,17 @@ export function AIAssistant({
               <Badge variant="secondary" className="text-xs">
                 <BookOpen className="size-3 mr-1" />
                 {readingContext.chapter || readingContext.bookTitle}
+              </Badge>
+
+              {/* Connection Status */}
+              <Badge variant={connectionStatus === 'connected' ? 'default' : 'secondary'} className="text-xs">
+                {connectionStatus === 'connected' ? (
+                  <><Zap className="size-3 mr-1" /> 已连接</>
+                ) : connectionStatus === 'connecting' ? (
+                  <><Zap className="size-3 mr-1 animate-pulse" /> 连接中...</>
+                ) : (
+                  <><AlertCircle className="size-3 mr-1" /> 已断开</>
+                )}
               </Badge>
             </div>
 
@@ -268,7 +248,7 @@ export function AIAssistant({
 
         {/* Messages Container */}
         <CardContent className="flex-1 overflow-hidden p-0 flex flex-col min-h-0">
-          {chatState.messages.length === 0 ? (
+          {messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
               <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Sparkles className="size-8 text-primary" />
@@ -282,7 +262,7 @@ export function AIAssistant({
                   variant="outline"
                   size="sm"
                   onClick={() => handleSendMessage("Summarize this chapter")}
-                  disabled={chatState.isLoading}
+                  disabled={isLoading || connectionStatus !== 'connected'}
                 >
                   Summarize Chapter
                 </Button>
@@ -290,7 +270,7 @@ export function AIAssistant({
                   variant="outline"
                   size="sm"
                   onClick={() => handleSendMessage("What are the key concepts?")}
-                  disabled={chatState.isLoading}
+                  disabled={isLoading || connectionStatus !== 'connected'}
                 >
                   Key Concepts
                 </Button>
@@ -298,7 +278,7 @@ export function AIAssistant({
                   variant="outline"
                   size="sm"
                   onClick={() => handleSendMessage("Generate discussion questions")}
-                  disabled={chatState.isLoading}
+                  disabled={isLoading || connectionStatus !== 'connected'}
                 >
                   Discussion Questions
                 </Button>
@@ -309,11 +289,29 @@ export function AIAssistant({
               ref={messagesContainerRef}
               className="flex-1 overflow-y-auto"
             >
-              {chatState.messages.map((message) => (
+              {messages.map((message) => (
                 <ChatMessage key={message.id} message={message} />
               ))}
               
-              {chatState.isTyping && <TypingIndicator />}
+              {isLoading && <TypingIndicator />}
+
+              {/* Error Display */}
+              {error && (
+                <div className="p-4 text-center">
+                  <div className="inline-flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-md">
+                    <AlertCircle className="size-4" />
+                    <span>{error}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={retryLastMessage}
+                      className="ml-2"
+                    >
+                      重试
+                    </Button>
+                  </div>
+                </div>
+              )}
               
               <div ref={messagesEndRef} />
             </div>
@@ -323,9 +321,9 @@ export function AIAssistant({
         {/* Input */}
         <ChatInputWrapper
           onSendMessage={handleSendMessage}
-          disabled={chatState.isLoading}
-          isLoading={chatState.isLoading}
-          showQuickActions={chatState.messages.length === 0}
+          disabled={isLoading || connectionStatus !== 'connected'}
+          isLoading={isLoading}
+          showQuickActions={messages.length === 0}
         />
       </Card>
 
@@ -335,8 +333,17 @@ export function AIAssistant({
           <Separator orientation="vertical" className="mx-0" />
           <div className="w-80 hidden md:block">
             <ChatHistory
-              sessions={chatState.sessions}
-              currentSessionId={chatState.currentSessionId}
+              sessions={conversations.map(conv => ({
+                id: conv.uuid,
+                title: conv.title,
+                bookTitle: conv.context_data?.title || readingContext.bookTitle,
+                chapter: conv.context_data?.currentChapter,
+                messageCount: conv.total_messages,
+                lastMessageAt: new Date(conv.last_message_at || conv.created_at),
+                createdAt: new Date(conv.created_at),
+                preview: conv.context_data?.preview
+              }))}
+              currentSessionId={currentConversationId}
               onSessionSelect={handleSessionSelect}
               onSessionDelete={handleSessionDelete}
               onNewSession={handleNewSession}
@@ -350,8 +357,17 @@ export function AIAssistant({
       <ChatHistoryMobile
         isOpen={isMobileHistoryOpen}
         onClose={() => setIsMobileHistoryOpen(false)}
-        sessions={chatState.sessions}
-        currentSessionId={chatState.currentSessionId}
+        sessions={conversations.map(conv => ({
+          id: conv.uuid,
+          title: conv.title,
+          bookTitle: conv.context_data?.title || readingContext.bookTitle,
+          chapter: conv.context_data?.currentChapter,
+          messageCount: conv.total_messages,
+          lastMessageAt: new Date(conv.last_message_at || conv.created_at),
+          createdAt: new Date(conv.created_at),
+          preview: conv.context_data?.preview
+        }))}
+        currentSessionId={currentConversationId}
         onSessionSelect={handleSessionSelect}
         onSessionDelete={handleSessionDelete}
         onNewSession={handleNewSession}
