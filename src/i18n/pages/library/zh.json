@@ -1,0 +1,136 @@
+{
+  "metadata": {
+    "title": "我的图书馆 | BooksOfLife",
+    "description": "管理您的个人图书馆，追踪阅读进度，通过AI助手发现新书"
+  },
+  "header": {
+    "title": "我的图书馆",
+    "description": "管理您的图书，追踪阅读进度，发现新的书籍"
+  },
+  "tabs": {
+    "library": "我的图书",
+    "search": "搜索图书", 
+    "lists": "我的书单"
+  },
+  "library_tab": {
+    "title": "图书馆概览",
+    "description": "您的阅读活动和进度概览"
+  },
+  "search_tab": {
+    "title": "搜索图书",
+    "description": "从外部资源查找图书并添加到您的图书馆",
+    "placeholder": "按标题、作者或ISBN搜索图书..."
+  },
+  "lists_tab": {
+    "title": "我的书单",
+    "description": "将您的图书整理成自定义列表和合集",
+    "coming_soon": "书单功能即将上线..."
+  },
+  "stats": {
+    "total_books": "图书总数",
+    "books_read": "已读图书",
+    "currently_reading": "正在阅读",
+    "want_to_read": "想要阅读",
+    "reading_time": "阅读时间",
+    "avg_rating": "平均评分",
+    "completion_rate": "完成率"
+  },
+  "recent_books": {
+    "title": "最近的图书",
+    "view_all": "查看全部",
+    "continue_reading": "继续阅读",
+    "start_reading": "开始阅读",
+    "mark_as_read": "标记为已读"
+  },
+  "reading_activity": {
+    "title": "阅读活动",
+    "pages_read": "已读页数",
+    "time_spent": "阅读时长",
+    "books_completed": "完成图书"
+  },
+  "book_actions": {
+    "add_to_library": "添加到图书馆",
+    "view_details": "查看详情",
+    "edit_book": "编辑图书",
+    "delete_book": "删除图书",
+    "mark_as_favorite": "标记为收藏",
+    "share_book": "分享图书"
+  },
+  "reading_status": {
+    "want_to_read": "想要阅读",
+    "currently_reading": "正在阅读", 
+    "completed": "已完成",
+    "on_hold": "暂停阅读",
+    "abandoned": "放弃阅读"
+  },
+  "filters": {
+    "all": "所有图书",
+    "fiction": "小说",
+    "non_fiction": "非小说",
+    "business": "商业",
+    "technology": "科技",
+    "self_help": "自助",
+    "biography": "传记",
+    "history": "历史",
+    "science": "科学"
+  },
+  "sort": {
+    "recent": "最近添加",
+    "title": "标题 A-Z",
+    "author": "作者 A-Z",
+    "rating": "评分最高",
+    "progress": "阅读进度"
+  },
+  "empty_states": {
+    "no_books": "您的图书馆还没有图书",
+    "no_books_description": "通过搜索图书开始建立您的图书馆",
+    "no_search_results": "未找到图书",
+    "no_search_results_description": "尝试调整您的搜索词或筛选条件",
+    "no_lists": "还没有创建书单",
+    "no_lists_description": "创建您的第一个书单来整理阅读内容"
+  },
+  "dashboard": {
+    "stats_cards": {
+      "total_books": "图书总数",
+      "currently_reading": "正在阅读",
+      "reading_streak": "阅读连续天数",
+      "average_rating": "平均评分",
+      "read_to_read": "已读 {read} 本，待读 {toRead} 本",
+      "pages_this_month": "本月已读 {pages} 页",
+      "days_in_row": "连续天数",
+      "out_of_stars": "满分5星"
+    },
+    "currently_reading_section": {
+      "title": "正在阅读",
+      "description": "您正在积极阅读的图书",
+      "progress": "进度",
+      "pages_format": "约 {current} / {total} 页",
+      "actions": {
+        "update_progress": "更新进度",
+        "add_note": "添加笔记",
+        "mark_as_read": "标记为已读",
+        "pause_reading": "暂停阅读"
+      }
+    },
+    "recent_books_section": {
+      "title": "最近的图书",
+      "description": "您最近添加或更新的图书",
+      "filter_placeholder": "按状态筛选",
+      "add_book": "添加图书"
+    },
+    "book_lists_section": {
+      "title": "我的书单",
+      "description": "将您的图书整理成自定义合集",
+      "create_list": "创建书单",
+      "books_count": "{count} 本图书",
+      "public_badge": "公开"
+    }
+  },
+  "messages": {
+    "book_added": "图书已成功添加到图书馆",
+    "book_removed": "图书已从图书馆移除",
+    "book_updated": "图书信息已更新",
+    "loading": "加载中...",
+    "error": "出现错误，请重试。"
+  }
+}

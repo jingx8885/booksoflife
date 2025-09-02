@@ -1,0 +1,136 @@
+{
+  "metadata": {
+    "title": "My Library | BooksOfLife",
+    "description": "Manage your personal book library, track reading progress, and discover new books with AI-powered assistance"
+  },
+  "header": {
+    "title": "My Library",
+    "description": "Manage your books, track your reading progress, and discover new titles"
+  },
+  "tabs": {
+    "library": "My Books",
+    "search": "Search Books", 
+    "lists": "My Lists"
+  },
+  "library_tab": {
+    "title": "My Library Dashboard",
+    "description": "Overview of your reading activity and progress"
+  },
+  "search_tab": {
+    "title": "Search for Books",
+    "description": "Find books from external sources and add them to your library",
+    "placeholder": "Search books by title, author, or ISBN..."
+  },
+  "lists_tab": {
+    "title": "My Book Lists",
+    "description": "Organize your books into custom lists and collections",
+    "coming_soon": "Book lists feature coming soon..."
+  },
+  "stats": {
+    "total_books": "Total Books",
+    "books_read": "Books Read",
+    "currently_reading": "Currently Reading",
+    "want_to_read": "Want to Read",
+    "reading_time": "Reading Time",
+    "avg_rating": "Average Rating",
+    "completion_rate": "Completion Rate"
+  },
+  "recent_books": {
+    "title": "Recent Books",
+    "view_all": "View All",
+    "continue_reading": "Continue Reading",
+    "start_reading": "Start Reading",
+    "mark_as_read": "Mark as Read"
+  },
+  "reading_activity": {
+    "title": "Reading Activity",
+    "pages_read": "Pages Read",
+    "time_spent": "Time Spent",
+    "books_completed": "Books Completed"
+  },
+  "book_actions": {
+    "add_to_library": "Add to Library",
+    "view_details": "View Details",
+    "edit_book": "Edit Book",
+    "delete_book": "Delete Book",
+    "mark_as_favorite": "Mark as Favorite",
+    "share_book": "Share Book"
+  },
+  "reading_status": {
+    "want_to_read": "Want to Read",
+    "currently_reading": "Currently Reading", 
+    "completed": "Completed",
+    "on_hold": "On Hold",
+    "abandoned": "Abandoned"
+  },
+  "filters": {
+    "all": "All Books",
+    "fiction": "Fiction",
+    "non_fiction": "Non-Fiction",
+    "business": "Business",
+    "technology": "Technology",
+    "self_help": "Self Help",
+    "biography": "Biography",
+    "history": "History",
+    "science": "Science"
+  },
+  "sort": {
+    "recent": "Recently Added",
+    "title": "Title A-Z",
+    "author": "Author A-Z",
+    "rating": "Highest Rated",
+    "progress": "Reading Progress"
+  },
+  "empty_states": {
+    "no_books": "No books in your library yet",
+    "no_books_description": "Start building your library by searching for books",
+    "no_search_results": "No books found",
+    "no_search_results_description": "Try adjusting your search terms or filters",
+    "no_lists": "No book lists created yet",
+    "no_lists_description": "Create your first book list to organize your reading"
+  },
+  "dashboard": {
+    "stats_cards": {
+      "total_books": "Total Books",
+      "currently_reading": "Currently Reading",
+      "reading_streak": "Reading Streak",
+      "average_rating": "Average Rating",
+      "read_to_read": "{read} read, {toRead} to read",
+      "pages_this_month": "{pages} pages this month",
+      "days_in_row": "days in a row",
+      "out_of_stars": "out of 5 stars"
+    },
+    "currently_reading_section": {
+      "title": "Currently Reading",
+      "description": "Books you're actively reading",
+      "progress": "Progress",
+      "pages_format": "~{current} / {total} pages",
+      "actions": {
+        "update_progress": "Update Progress",
+        "add_note": "Add Note",
+        "mark_as_read": "Mark as Read",
+        "pause_reading": "Pause Reading"
+      }
+    },
+    "recent_books_section": {
+      "title": "Recent Books",
+      "description": "Books you've recently added or updated",
+      "filter_placeholder": "Filter by status",
+      "add_book": "Add Book"
+    },
+    "book_lists_section": {
+      "title": "My Lists",
+      "description": "Organize your books into custom collections",
+      "create_list": "Create List",
+      "books_count": "{count} books",
+      "public_badge": "Public"
+    }
+  },
+  "messages": {
+    "book_added": "Book added to library successfully",
+    "book_removed": "Book removed from library",
+    "book_updated": "Book information updated",
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again."
+  }
+}

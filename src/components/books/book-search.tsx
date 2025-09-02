@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { BookSearchFilters, ExternalBookResult } from "@/types/book";
+import { useTranslations } from "next-intl";
 
 interface BookSearchProps {
   onBookSelect?: (book: ExternalBookResult) => void;
@@ -22,10 +23,12 @@ interface BookSearchProps {
 export function BookSearch({
   onBookSelect,
   onAddToLibrary,
-  placeholder = "Search books by title, author, or ISBN...",
+  placeholder,
   showFilters = true,
   autoFocus = false
 }: BookSearchProps) {
+  const t = useTranslations('book_actions');
+  const tEmpty = useTranslations('empty_states');
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<BookSearchFilters>({});
   const [results, setResults] = useState<ExternalBookResult[]>([]);
@@ -64,7 +67,7 @@ export function BookSearch({
             thumbnail: "https://books.google.com/books/content?id=example&printsec=frontcover&img=1&zoom=1&source=gbs_api"
           },
           publisher: "Scribner",
-          source: "google_books"
+          source: "google_books" as const
         },
         {
           id: "2", 
@@ -81,7 +84,7 @@ export function BookSearch({
             thumbnail: "https://books.google.com/books/content?id=example2&printsec=frontcover&img=1&zoom=1&source=gbs_api"
           },
           publisher: "J.B. Lippincott & Co.",
-          source: "google_books"
+          source: "google_books" as const
         }
       ].filter(book => 
         book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -129,7 +132,7 @@ export function BookSearch({
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={placeholder}
+          placeholder={placeholder || "Search books by title, author, or ISBN..."}
           className="pl-10 pr-10"
           autoFocus={autoFocus}
         />
@@ -280,7 +283,7 @@ export function BookSearch({
                               size="sm"
                               onClick={() => onBookSelect(book)}
                             >
-                              View Details
+                              {t('view_details')}
                             </Button>
                           )}
                           {onAddToLibrary && (
@@ -288,7 +291,7 @@ export function BookSearch({
                               size="sm"
                               onClick={() => onAddToLibrary(book)}
                             >
-                              Add to Library
+                              {t('add_to_library')}
                             </Button>
                           )}
                         </div>
@@ -302,9 +305,9 @@ export function BookSearch({
             <Card>
               <CardContent className="p-8 text-center">
                 <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No books found</h3>
+                <h3 className="text-lg font-semibold mb-2">{tEmpty('no_search_results')}</h3>
                 <p className="text-muted-foreground">
-                  Try adjusting your search terms or filters
+                  {tEmpty('no_search_results_description')}
                 </p>
               </CardContent>
             </Card>

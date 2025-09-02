@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { LibraryDashboard } from "@/components/books/library-dashboard";
-import { BookSearch } from "@/components/books/book-search";
+import { BookSearchWrapper } from "@/components/books/book-search-wrapper";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { getLibraryPage } from "@/services/page";
 
 export async function generateMetadata({
   params,
@@ -12,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations();
+  const libraryPage = await getLibraryPage(locale);
 
   let canonicalUrl = `${process.env.NEXT_PUBLIC_WEB_URL}/library`;
 
@@ -21,8 +22,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: "My Library | BooksOfLife",
-    description: "Manage your personal book library, track reading progress, and discover new books",
+    title: libraryPage.metadata.title,
+    description: libraryPage.metadata.description,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -38,6 +39,7 @@ export default async function LibraryPage({
 }) {
   const { locale } = await params;
   const { tab } = await searchParams;
+  const libraryPage = await getLibraryPage(locale);
   
   const defaultTab = tab || "library";
 
@@ -45,9 +47,9 @@ export default async function LibraryPage({
     <div className="container py-6 md:py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">My Library</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{libraryPage.header.title}</h1>
         <p className="text-muted-foreground">
-          Manage your books, track your reading progress, and discover new titles
+          {libraryPage.header.description}
         </p>
       </div>
 
@@ -56,9 +58,9 @@ export default async function LibraryPage({
       {/* Main Content */}
       <Tabs value={defaultTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
-          <TabsTrigger value="library">My Books</TabsTrigger>
-          <TabsTrigger value="search">Search Books</TabsTrigger>
-          <TabsTrigger value="lists">My Lists</TabsTrigger>
+          <TabsTrigger value="library">{libraryPage.tabs.library}</TabsTrigger>
+          <TabsTrigger value="search">{libraryPage.tabs.search}</TabsTrigger>
+          <TabsTrigger value="lists">{libraryPage.tabs.lists}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="library" className="space-y-6">
@@ -70,18 +72,15 @@ export default async function LibraryPage({
         <TabsContent value="search" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Search for Books</CardTitle>
+              <CardTitle>{libraryPage.search_tab.title}</CardTitle>
               <CardDescription>
-                Find books from external sources and add them to your library
+                {libraryPage.search_tab.description}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <BookSearch 
+              <BookSearchWrapper 
                 autoFocus 
-                onAddToLibrary={(book) => {
-                  // Mock function - replace with actual implementation
-                  console.log("Adding book to library:", book);
-                }}
+                placeholder={libraryPage.search_tab.placeholder}
               />
             </CardContent>
           </Card>
@@ -90,14 +89,14 @@ export default async function LibraryPage({
         <TabsContent value="lists" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>My Book Lists</CardTitle>
+              <CardTitle>{libraryPage.lists_tab.title}</CardTitle>
               <CardDescription>
-                Organize your books into custom lists and collections
+                {libraryPage.lists_tab.description}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
-                <p>Book lists feature coming soon...</p>
+                <p>{libraryPage.lists_tab.coming_soon}</p>
               </div>
             </CardContent>
           </Card>

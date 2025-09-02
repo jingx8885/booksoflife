@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "几小时内构建任何 AI SaaS 创业项目 | ShipAny",
-    "description": "ShipAny 是一个用于构建 AI SaaS 创业项目的 NextJS 模板，提供各种模板和组件，帮助您快速启动。",
-    "keywords": "ShipAny, AI SaaS 模板, NextJS 模板"
+    "title": "AI驱动的阅读转化平台 | BooksOfLife",
+    "description": "BooksOfLife 通过AI阅读辅助帮助您读得更快、理解更深。将未读书籍转化为改变人生的洞察。",
+    "keywords": "BooksOfLife, AI阅读助手, 读书, 阅读加速"
   },
   "user": {
     "sign_in": "登录",
@@ -11,7 +11,8 @@
     "api_keys": "API 密钥",
     "my_orders": "我的订单",
     "user_center": "用户中心",
-    "admin_system": "管理后台"
+    "admin_system": "管理后台",
+    "library": "图书馆"
   },
   "sign_modal": {
     "sign_in_title": "登录",
@@ -132,5 +133,76 @@
     "contact_tip": "其他联系方式",
     "rating_tip": "您对 ShipAny 的看法如何？",
     "placeholder": "在这里留下您的反馈..."
+  },
+  "dashboard": {
+    "stats_cards": {
+      "total_books": "图书总数",
+      "currently_reading": "正在阅读",
+      "reading_streak": "阅读连续天数",
+      "average_rating": "平均评分",
+      "read_to_read": "已读 {read} 本，待读 {toRead} 本",
+      "pages_this_month": "本月已读 {pages} 页",
+      "days_in_row": "连续天数",
+      "out_of_stars": "满分5星"
+    },
+    "currently_reading_section": {
+      "title": "正在阅读",
+      "description": "您正在积极阅读的图书",
+      "progress": "进度",
+      "pages_format": "约 {current} / {total} 页",
+      "actions": {
+        "update_progress": "更新进度",
+        "add_note": "添加笔记",
+        "mark_as_read": "标记为已读",
+        "pause_reading": "暂停阅读"
+      }
+    },
+    "recent_books_section": {
+      "title": "最近的图书",
+      "description": "您最近添加或更新的图书",
+      "filter_placeholder": "按状态筛选",
+      "add_book": "添加图书"
+    },
+    "book_lists_section": {
+      "title": "我的书单",
+      "description": "将您的图书整理成自定义合集",
+      "create_list": "创建书单",
+      "books_count": "{count} 本图书",
+      "public_badge": "公开"
+    }
+  },
+  "reading_status": {
+    "want_to_read": "想要阅读",
+    "currently_reading": "正在阅读", 
+    "completed": "已完成",
+    "on_hold": "暂停阅读",
+    "abandoned": "放弃阅读"
+  },
+  "filters": {
+    "all": "所有图书",
+    "fiction": "小说",
+    "non_fiction": "非小说",
+    "business": "商业",
+    "technology": "科技",
+    "self_help": "自助",
+    "biography": "传记",
+    "history": "历史",
+    "science": "科学"
+  },
+  "book_actions": {
+    "add_to_library": "添加到图书馆",
+    "view_details": "查看详情",
+    "edit_book": "编辑图书",
+    "delete_book": "删除图书",
+    "mark_as_favorite": "标记为收藏",
+    "share_book": "分享图书"
+  },
+  "empty_states": {
+    "no_books": "您的图书馆还没有图书",
+    "no_books_description": "通过搜索图书开始建立您的图书馆",
+    "no_search_results": "未找到图书",
+    "no_search_results_description": "尝试调整您的搜索词或筛选条件",
+    "no_lists": "还没有创建书单",
+    "no_lists_description": "创建您的第一个书单来整理阅读内容"
   }
 }
