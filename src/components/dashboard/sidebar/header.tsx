@@ -15,7 +15,7 @@ export default function ({ brand }: { brand: BrandType }) {
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
-          <Link href={brand?.url as any} className="flex items-center gap-2">
+          <Link href={(brand?.url || "#") as any} className="flex items-center gap-2">
             {brand?.logo && (
               <Image
                 src={brand?.logo?.src as any}
