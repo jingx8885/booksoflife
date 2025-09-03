@@ -16,12 +16,14 @@ import { GeminiAdapter } from './gemini';
 import { DeepSeekAdapter } from './deepseek';
 import { QwenAdapter } from './qwen';
 import { KimiAdapter } from './kimi';
+import { MockAIAdapter } from './mock';
 
 // Export all adapters
 export { GeminiAdapter } from './gemini';
 export { DeepSeekAdapter } from './deepseek';
 export { QwenAdapter } from './qwen';
 export { KimiAdapter } from './kimi';
+export { MockAIAdapter } from './mock';
 
 /**
  * Registry of available adapter classes
@@ -31,6 +33,7 @@ const ADAPTER_REGISTRY: Record<AIProvider, new () => IAIAdapter> = {
   deepseek: DeepSeekAdapter,
   qwen: QwenAdapter,
   kimi: KimiAdapter,
+  mock: MockAIAdapter,
 };
 
 /**
@@ -189,6 +192,15 @@ export const PROVIDER_CAPABILITIES = {
     maxContextTokens: 131072, // 128K for v1-128k
     reliability: 'medium',
     costTier: 'medium',
+  },
+  mock: {
+    supportsStreaming: true,
+    supportsFunctionCalling: false,
+    supportsImages: false,
+    supportsDocuments: false,
+    maxContextTokens: 4096,
+    reliability: 'high', // Always works in dev
+    costTier: 'free',
   },
 } as const;
 

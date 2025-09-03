@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     let conversationUuid = body.conversationUuid;
     let isNewConversation = false;
     let conversation = null;
-    let conversationHistory = [];
+    let conversationHistory: any[] = [];
 
     if (conversationUuid) {
       // Get existing conversation
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
                   chunkCount,
                   streamingResponse: true,
                 },
-                tokenCount: chunk.usage?.totalTokens || null,
+                tokenCount: chunk.usage?.totalTokens || undefined,
                 aiModel: chunk.model,
                 aiProvider: chunk.provider,
                 responseTimeMs: responseTime,

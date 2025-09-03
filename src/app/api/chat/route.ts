@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     let conversationUuid = body.conversationUuid;
     let isNewConversation = false;
     let conversation = null;
-    let conversationHistory = [];
+    let conversationHistory: any[] = [];
 
     if (conversationUuid) {
       // Get existing conversation

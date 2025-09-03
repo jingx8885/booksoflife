@@ -3,7 +3,7 @@
 /**
  * Supported AI providers
  */
-export type AIProvider = 'gemini' | 'deepseek' | 'qwen' | 'kimi';
+export type AIProvider = 'gemini' | 'deepseek' | 'qwen' | 'kimi' | 'mock';
 
 /**
  * AI model capabilities

@@ -12,6 +12,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { BookCover } from "@/components/ui/books/book-cover";
 import { Book, BookList, BookListItem } from "@/types/book";
 import { useTranslations } from "next-intl";
+import { AddBookForm } from "./add-book-form";
+import { ReadingStatsDashboard } from "./reading-stats-dashboard";
+import { useRouter } from "next/navigation";
 
 interface LibraryStats {
   total_books: number;
@@ -28,6 +31,7 @@ export function LibraryDashboard() {
   const t = useTranslations('dashboard');
   const tFilters = useTranslations('filters');
   const tStatus = useTranslations('reading_status');
+  const router = useRouter();
   const [stats, setStats] = useState<LibraryStats | null>(null);
   const [recentBooks, setRecentBooks] = useState<BookListItem[]>([]);
   const [currentlyReading, setCurrentlyReading] = useState<BookListItem[]>([]);
@@ -43,111 +47,57 @@ export function LibraryDashboard() {
     setIsLoading(true);
     
     try {
-      // Mock data - replace with actual API calls
-      const mockStats: LibraryStats = {
-        total_books: 156,
-        books_read: 89,
-        currently_reading: 3,
-        want_to_read: 64,
-        reading_streak_days: 12,
-        pages_read_this_month: 847,
-        average_rating: 4.2,
-        total_reading_time_hours: 234
-      };
+      // Fetch real data from API
+      const [statsResponse, booksResponse, bookListsResponse] = await Promise.all([
+        fetch('/api/books/stats'),
+        fetch('/api/books'),
+        fetch('/api/book-lists')
+      ]);
 
-      const mockRecentBooks: BookListItem[] = [
-        {
-          list_uuid: "recent",
-          book_uuid: "book-1",
-          user_uuid: "user-1",
-          sort_order: 1,
-          reading_status: "read",
-          progress_percentage: 100,
-          personal_rating: 4.5,
-          book: {
-            uuid: "book-1",
-            title: "The Midnight Library",
-            author: "Matt Haig",
-            cover_url: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=400&fit=crop",
-            genre: "Fiction",
-            page_count: 288,
-            status: "active",
-            language: "en"
-          }
-        },
-        {
-          list_uuid: "recent",
-          book_uuid: "book-2", 
-          user_uuid: "user-1",
-          sort_order: 2,
-          reading_status: "currently_reading",
-          progress_percentage: 65,
-          book: {
-            uuid: "book-2",
-            title: "Project Hail Mary",
-            author: "Andy Weir",
-            cover_url: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&h=400&fit=crop",
-            genre: "Science Fiction",
-            page_count: 496,
-            status: "active",
-            language: "en"
-          }
-        },
-        {
-          list_uuid: "recent",
-          book_uuid: "book-3",
-          user_uuid: "user-1", 
-          sort_order: 3,
-          reading_status: "want_to_read",
-          progress_percentage: 0,
-          book: {
-            uuid: "book-3",
-            title: "Klara and the Sun",
-            author: "Kazuo Ishiguro",
-            cover_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop",
-            genre: "Literary Fiction",
-            page_count: 320,
-            status: "active",
-            language: "en"
-          }
-        }
-      ];
+      let stats: LibraryStats | null = null;
+      let books: BookListItem[] = [];
+      let lists: BookList[] = [];
 
-      const mockCurrentlyReading: BookListItem[] = mockRecentBooks.filter(
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        stats = statsData.stats;
+      }
+
+      if (booksResponse.ok) {
+        const booksData = await booksResponse.json();
+        books = booksData.books || [];
+      }
+
+      if (bookListsResponse.ok) {
+        const listsData = await bookListsResponse.json();
+        lists = listsData.bookLists || [];
+      }
+
+      // Filter currently reading books
+      const currentlyReadingBooks = books.filter(
         book => book.reading_status === "currently_reading"
       );
 
-      const mockBookLists: BookList[] = [
-        {
-          uuid: "favorites",
-          user_uuid: "user-1",
-          name: "Favorites",
-          description: "My all-time favorite books",
-          is_public: false,
-          is_default: false,
-          list_type: "favorites",
-          sort_order: 1,
-          book_count: 12
-        },
-        {
-          uuid: "sci-fi", 
-          user_uuid: "user-1",
-          name: "Science Fiction",
-          description: "Best sci-fi novels I've read",
-          is_public: true,
-          is_default: false,
-          list_type: "custom",
-          sort_order: 2,
-          book_count: 28
-        }
-      ];
-
-      setStats(mockStats);
-      setRecentBooks(mockRecentBooks);
-      setCurrentlyReading(mockCurrentlyReading);
-      setBookLists(mockBookLists);
+      setStats(stats);
+      setRecentBooks(books);
+      setCurrentlyReading(currentlyReadingBooks);
+      setBookLists(lists);
     } catch (error) {
       console.error("Error loading library data:", error);
+      // Set empty states on error
+      setStats({
+        total_books: 0,
+        books_read: 0,
+        currently_reading: 0,
+        want_to_read: 0,
+        reading_streak_days: 0,
+        pages_read_this_month: 0,
+        average_rating: 0,
+        total_reading_time_hours: 0
+      });
+      setRecentBooks([]);
+      setCurrentlyReading([]);
+      setBookLists([]);
     } finally {
       setIsLoading(false);
     }
@@ -163,6 +113,9 @@ export function LibraryDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Reading Statistics Dashboard */}
+      <ReadingStatsDashboard />
+
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
@@ -309,16 +262,17 @@ export function LibraryDashboard() {
                 <SelectItem value="paused">{tStatus('on_hold')}</SelectItem>
               </SelectContent>
             </Select>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              {t('recent_books_section.add_book')}
-            </Button>
+            <AddBookForm onBookAdded={loadLibraryData} />
           </div>
         </CardHeader>
                 <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredBooks.map((item) => (
-              <Card key={item.book_uuid} className="group hover:shadow-md transition-all duration-200 cursor-pointer border hover:border-primary/20">
+              <Card 
+                key={item.book_uuid} 
+                className="group hover:shadow-md transition-all duration-200 cursor-pointer border hover:border-primary/20"
+                onClick={() => router.push(`/library/${item.book_uuid}`)}
+              >
                 <CardContent className="p-4">
                   <div className="flex gap-3">
                     <BookCover

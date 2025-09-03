@@ -9,7 +9,7 @@ config({ path: ".env.local" });
 export default defineConfig({
   out: "./src/db/migrations",
   schema: "./src/db/schema.ts",
-  dialect: "postgresql",
+  dialect: "sqlite",
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
