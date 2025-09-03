@@ -44,7 +44,13 @@
       "Bash(pnpm add:*)",
       "Bash(pnpm build:*)",
       "Bash(mv:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(sudo pnpm add:*)",
+      "Bash(sudo pnpm run db:push)",
+      "Bash(sudo pnpm:*)",
+      "Bash(sudo npm run build-release)",
+      "Bash(sudo npx drizzle-kit push --config=src/db/config.ts)",
+      "Bash(find:*)"
     ]
   }
 }

@@ -47,7 +47,7 @@ function getProviderConfig(provider: AIProvider): ProviderConfig {
   const priority = parseInt(process.env[`${envPrefix}_PRIORITY`] || '1');
 
   // Provider-specific model lists
-  const modelMap: Record<AIProvider, string[]> = {
+  const modelMap: Record<string, string[]> = {
     gemini: [
       'gemini-1.5-pro',
       'gemini-1.5-flash',
@@ -66,6 +66,11 @@ function getProviderConfig(provider: AIProvider): ProviderConfig {
       'moonshot-v1-8k',
       'moonshot-v1-32k',
       'moonshot-v1-128k',
+    ],
+    mock: [
+      'mock-model',
+      'mock-advanced',
+      'mock-fast',
     ],
   };
 
@@ -90,6 +95,7 @@ export function loadAIServiceConfig(): AIServiceConfig {
     getProviderConfig('deepseek'),
     getProviderConfig('qwen'),
     getProviderConfig('kimi'),
+    getProviderConfig('mock'),
   ].filter(config => config.enabled && config.apiKey);
 
   const loadBalancingStrategy = (process.env.AI_LOAD_BALANCING_STRATEGY || 'priority') as LoadBalancingStrategy;

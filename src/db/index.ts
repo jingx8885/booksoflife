@@ -1,5 +1,5 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
 
 // Database instance for Node.js environment
 let dbInstance: ReturnType<typeof drizzle> | null = null;
@@ -16,14 +16,16 @@ export function db() {
     return dbInstance;
   }
 
-  // Node.js environment with connection pool configuration
-  const client = postgres(databaseUrl, {
-    prepare: false,
-    max: 10, // Maximum connections in pool
-    idle_timeout: 30, // Idle connection timeout (seconds)
-    connect_timeout: 10, // Connection timeout (seconds)
-  });
-  dbInstance = drizzle({ client });
+  // Remove file:// prefix if present
+  const dbPath = databaseUrl.replace("file://", "").replace("file:", "");
+  
+  // SQLite connection
+  const sqlite = new Database(dbPath);
+  dbInstance = drizzle({ client: sqlite });
 
   return dbInstance;
 }
+
+// Export direct db instance for convenience
+export { db as default };
+export const database = db();
